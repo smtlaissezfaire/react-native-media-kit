@@ -49,7 +49,17 @@
 
 - (void)initPlayerIfNeeded {
   if(!player) {
-    player = [AVPlayer playerWithURL:[NSURL URLWithString:self.src]];
+    NSURL *url;
+    NSString *filePrefix = @"file://";
+
+    if ([self.src hasPrefix: filePrefix]) {
+      NSString *file = [self.src substringFromIndex:[filePrefix length]];
+      url = [NSURL fileURLWithPath:file];
+    } else {
+      url = [NSURL URLWithString:self.src];
+    }
+
+    player = [AVPlayer playerWithURL:url];
     [self setPlayer:player];
     [self addProgressObserver];
     [self addObservers];
@@ -323,9 +333,6 @@
     }
   }
 }
-
-
-
 
 - (void)pause {
   NSLog(@"pause...");
